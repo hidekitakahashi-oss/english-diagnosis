@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>英語学習サービス診断ツール | DEMO</title>
+  <style>
+    :root {
+      --primary: #003087;
+      --primary-light: #1a4fa3;
+      --accent: #0072CE;
+      --bg: #f4f7fb;
+      --card-bg: #ffffff;
+      --text: #1a1a2e;
+      --text-light: #555b6e;
+      --border: #dce3ef;
+      --progrit: #ffa500;
+      --polyglots: #2eab5e;
+      --englishcentral: #9b1b30;
+      --shadow: 0 2px 16px rgba(0,48,135,0.08);
+      --radius: 14px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    .header {
+      background: var(--primary);
+      color: #fff;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .header-logo {
+      font-size: 0.75rem;
+      opacity: 0.85;
+      border-right: 1px solid rgba(255,255,255,0.35);
+      padding-right: 12px;
+      letter-spacing: 0.05em;
+    }
+    .header-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+    .container {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 32px 16px 60px;
+    }
+
+    /* ====== START SCREEN ====== */
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    .start-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 40px 36px;
+      text-align: center;
+    }
+    .start-icon {
+      font-size: 3rem;
+      margin-bottom: 16px;
+    }
+    .start-card h1 {
+      font-size: 1.5rem;
+      color: var(--primary);
+      margin-bottom: 10px;
+      line-height: 1.4;
+    }
+    .start-card .lead {
+      color: var(--text-light);
+      font-size: 0.95rem;
+      line-height: 1.7;
+      margin-bottom: 24px;
+    }
+    .badge-row {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 28px;
+    }
+    .badge {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      padding: 5px 14px;
+      font-size: 0.8rem;
+      color: var(--text-light);
+    }
+    .btn-start {
+      display: inline-block;
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      padding: 15px 48px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      letter-spacing: 0.06em;
+      transition: background 0.2s, transform 0.15s;
+      box-shadow: 0 4px 18px rgba(0,48,135,0.22);
+    }
+    .btn-start:hover { background: var(--primary-light); transform: translateY(-1px); }
+    .company-logos {
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+      margin-top: 28px;
+      flex-wrap: wrap;
+    }
+    .co-chip {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #fff;
+    }
+    .co-chip.progrit { background: var(--progrit); }
+    .co-chip.polyglots { background: var(--polyglots); }
+    .co-chip.ec { background: var(--englishcentral); }
+
+    /* ====== QUESTION SCREEN ====== */
+    .q-progress-wrap {
+      margin-bottom: 24px;
+    }
+    .q-progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: var(--text-light);
+      margin-bottom: 7px;
+    }
+    .q-progress-bar {
+      height: 6px;
+      background: var(--border);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .q-progress-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 99px;
+      transition: width 0.4s ease;
+    }
+    .q-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 32px 28px 28px;
+    }
+    .q-number {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .q-text {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+    }
+    .option-btn {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: var(--bg);
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      cursor: pointer;
+      text-align: left;
+      font-size: 0.95rem;
+      color: var(--text);
+      transition: border-color 0.18s, background 0.18s;
+      line-height: 1.5;
+      font-family: inherit;
+    }
+    .option-btn:hover { border-color: var(--accent); background: #edf3fb; }
+    .option-btn.selected {
+      border-color: var(--primary);
+      background: #e8eef8;
+      color: var(--primary);
+      font-weight: 600;
+    }
+    .opt-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      flex-shrink: 0;
+      margin-top: 1px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-light);
+      transition: all 0.18s;
+    }
+    .option-btn.selected .opt-icon {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #fff;
+    }
+    .q-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 24px;
+    }
+    .btn-back {
+      background: none;
+      border: none;
+      color: var(--text-light);
+      font-size: 0.9rem;
+      cursor: pointer;
+      padding: 8px 4px;
+      font-family: inherit;
+    }
+    .btn-back:hover { color: var(--text); }
+    .btn-next {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      padding: 11px 36px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.2s, opacity 0.2s;
+      letter-spacing: 0.04em;
+    }
+    .btn-next:disabled { opacity: 0.35; cursor: not-allowed; }
+    .btn-next:not(:disabled):hover { background: var(--primary-light); }
+
+    /* ====== RESULT SCREEN ====== */
+    .result-header {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .result-header h2 {
+      font-size: 1.5rem;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+    .result-header p {
+      color: var(--text-light);
+      font-size: 0.9rem;
+    }
+    .result-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .result-card {
+      background: var(--card-bg);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      border-left: 5px solid var(--border);
+    }
+    .result-card.rank-1 { border-left-color: #FFD700; }
+    .result-card.rank-2 { border-left-color: #C0C0C0; }
+    .result-card.rank-3 { border-left-color: #CD7F32; }
+    .result-card-top {
+      padding: 20px 22px 16px;
+    }
+    .rc-rank-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .rc-rank-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .rank-medal {
+      font-size: 1.4rem;
+    }
+    .rank-label {
+      font-size: 0.78rem;
+      color: var(--text-light);
+      font-weight: 600;
+      letter-spacing: 0.06em;
+    }
+    .rc-match { text-align: right; }
+    .rc-stars-text {
+      font-size: 1.05rem;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .rc-stars-row {
+      display: inline-flex;
+      gap: 1px;
+      margin-bottom: 3px;
+    }
+    .star-full, .star-empty { font-size: 1.5rem; line-height: 1; }
+    .star-full { color: #FFD700; }
+    .star-empty { color: #ddd; }
+    .star-half-wrap {
+      position: relative;
+      display: inline-block;
+      font-size: 1.5rem;
+      line-height: 1;
+      color: #ddd;
+    }
+    .star-half-fill {
+      position: absolute;
+      left: 0; top: 0;
+      color: #FFD700;
+      width: 50%;
+      overflow: hidden;
+      display: block;
+      white-space: nowrap;
+    }
+    .rc-match-label {
+      font-size: 0.7rem;
+      color: var(--text-light);
+      display: block;
+      margin-top: 1px;
+    }
+    .rc-service-info {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+    }
+    .rc-company-badge {
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #fff;
+      white-space: nowrap;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .rc-company-badge.progrit { background: var(--progrit); }
+    .rc-company-badge.polyglots { background: var(--polyglots); }
+    .rc-company-badge.ec { background: var(--englishcentral); }
+    .rc-service-name {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 3px;
+    }
+    .rc-tagline {
+      font-size: 0.82rem;
+      color: var(--text-light);
+    }
+    .result-card-body {
+      border-top: 1px solid var(--border);
+      padding: 16px 22px;
+    }
+    .rc-desc {
+      font-size: 0.88rem;
+      color: var(--text-light);
+      line-height: 1.65;
+      margin-bottom: 14px;
+    }
+    .rc-reasons-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.06em;
+      margin-bottom: 8px;
+    }
+    .rc-reasons {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .rc-reasons li {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 0.88rem;
+      color: var(--text);
+      line-height: 1.5;
+    }
+    .rc-reasons li::before {
+      content: "✓";
+      color: var(--accent);
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .btn-retry-wrap {
+      text-align: center;
+      margin-top: 36px;
+    }
+    .btn-retry {
+      display: inline-block;
+      background: transparent;
+      color: var(--primary);
+      border: 2px solid var(--primary);
+      border-radius: 50px;
+      padding: 12px 36px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.2s, color 0.2s;
+      letter-spacing: 0.04em;
+    }
+    .btn-retry:hover { background: var(--primary); color: #fff; }
+    .result-note {
+      text-align: center;
+      font-size: 0.78rem;
+      color: var(--text-light);
+      margin-top: 20px;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 500px) {
+      .start-card { padding: 28px 20px; }
+      .q-card { padding: 24px 18px 20px; }
+      .q-text { font-size: 1rem; }
+      .result-card-top, .result-card-body { padding: 16px; }
+      .rc-stars-text { font-size: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+<header class="header">
+  <span class="header-logo">〇〇株式会社</span>
+  <span class="header-title">英語学習サービス 診断ツール</span>
+</header>
+
+<!-- ========== START SCREEN ========== -->
+<div class="container">
+  <div id="screen-start" class="screen active">
+    <div class="start-card">
+      <div class="start-icon">📊</div>
+      <h1>あなたに合う英語学習サービスを<br>診断します</h1>
+      <p class="lead">
+        7つの質問に答えるだけで、あなたの学習スタイル・目標に最もマッチする英語学習サービスをご提案します
+      </p>
+      <div class="badge-row">
+        <span class="badge">📝 全7問</span>
+        <span class="badge">⏱ 約2分</span>
+        <span class="badge">🏆 上位3サービスを提案</span>
+      </div>
+      <button class="btn-start" onclick="startQuiz()">診断スタート →</button>
+      <div class="company-logos">
+        <div class="co-chip progrit">● プログリット</div>
+        <div class="co-chip polyglots">● フルーエント</div>
+        <div class="co-chip ec">● ビジョンイングリッシュ</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== QUESTION SCREEN ========== -->
+  <div id="screen-question" class="screen">
+    <div class="q-progress-wrap">
+      <div class="q-progress-label">
+        <span id="q-progress-text">Question 1 / 8</span>
+        <span id="q-progress-pct">0%</span>
+      </div>
+      <div class="q-progress-bar">
+        <div class="q-progress-fill" id="q-progress-fill" style="width:0%"></div>
+      </div>
+    </div>
+    <div class="q-card">
+      <div class="q-number" id="q-number">Q1</div>
+      <div class="q-text" id="q-text"></div>
+      <div class="options" id="q-options"></div>
+      <div class="q-actions">
+        <button class="btn-back" id="btn-back" onclick="prevQuestion()">← 前の質問</button>
+        <button class="btn-next" id="btn-next" onclick="nextQuestion()" disabled>次へ →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== RESULT SCREEN ========== -->
+  <div id="screen-result" class="screen">
+    <div class="result-header">
+      <h2>🎉 診断結果</h2>
+      <p>あなたの回答をもとに、最適な英語学習サービスをランキング形式でご提案します</p>
+    </div>
+    <div class="result-cards" id="result-cards"></div>
+    <div class="result-note">
+      ※ 診断結果はあくまで参考情報です。詳細は各サービスの担当者にお問い合わせください。
+    </div>
+    <div class="btn-retry-wrap">
+      <button class="btn-retry" onclick="resetQuiz()">もう一度診断する</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+//  DATA
+// ============================================================
+const questions = [
+  {
+    text: "英語学習の主な目的は何ですか？（複数選択可）",
+    multiSelect: true,
+    options: [
+      "海外赴任・出張に対応できる英語力を身につけたい",
+      "外国籍社員との会議・ディスカッションに備えたい",
+      "業務上の基本的な連絡や簡単なやり取りを滞りなく行える英語力を伸ばしたい",
+      "ネイティブに近い自然な表現を習得したい",
+      "基礎から体系的に学び直したい"
+    ],
+    tags: [
+      ['business','overseas','professional'],
+      ['business','meeting','professional'],
+      ['business','basic','communication'],
+      ['speaking','natural','fluency'],
+      ['beginner-goal','comprehensive','foundation']
+    ]
+  },
+  {
+    text: "現在の英語レベルを教えてください。",
+    options: [
+      "初級（簡単な挨拶や日常会話も難しい）",
+      "中級（簡単なやり取りはできるが、ビジネス場面では自信がない）",
+      "上級（ビジネス英語をある程度こなせる・会議や商談に参加できる）",
+      "わからない（自分のレベルが把握できていない）"
+    ],
+    tags: [
+      ['beginner'],
+      ['intermediate'],
+      ['advanced'],
+      ['intermediate']
+    ]
+  },
+  {
+    text: "どの期間を目安に英語力を向上させたいとお考えですか？",
+    options: [
+      "〜3ヶ月以内（短期で成果を出したい）",
+      "3〜6ヶ月以内（中期的に伸ばしたい）",
+      "6〜12ヶ月以内（じっくり取り組みたい）",
+      "1年以上（長期的にスキルアップを目指したい）"
+    ],
+    tags: [
+      ['intensive','short-term'],
+      ['medium-term'],
+      ['long-term','continuous'],
+      ['very-long-term','continuous']
+    ]
+  },
+  {
+    text: "特に強化したいスキルを選んでください。（複数選択可）",
+    multiSelect: true,
+    options: [
+      "スピーキング",
+      "リスニング",
+      "リーディング",
+      "ライティング"
+    ],
+    tags: [
+      ['speaking','pronunciation'],
+      ['listening','comprehension'],
+      ['reading','vocabulary'],
+      ['writing']
+    ]
+  },
+  {
+    text: "どのような学習スタイルが自分に合っていると思いますか？",
+    options: [
+      "アプリを使って自分のペースで自習したい",
+      "コーチやトレーナーにサポート・管理してもらいながら学びたい",
+      "動画やコンテンツを観ながら楽しく学びたい",
+      "人と実際に会話して、実践的に英語を練習したい"
+    ],
+    tags: [
+      ['app','self-paced'],
+      ['coaching','support'],
+      ['video','content'],
+      ['conversation','practice']
+    ]
+  },
+  {
+    text: "学習のサポート・フィードバックはどのくらい必要ですか？",
+    options: [
+      "自分自身で取り組むのでサポートは不要",
+      "チャットやテキストでのサポートはほしい",
+      "週1回のセッションや毎日のサポートがほしい"
+    ],
+    tags: [
+      ['self-managed','independent'],
+      ['some-support'],
+      ['coaching','intensive-support']
+    ]
+  },
+  {
+    text: "過去に英語学習がうまく続かなかった経験はありますか？その主な理由として近いものは？",
+    options: [
+      "何を・どう勉強すればよいかわからなかった",
+      "モチベーションや習慣が続かなかった",
+      "仕事が忙しく時間を確保できなかった",
+      "特に挫折した経験はない"
+    ],
+    tags: [
+      ['no-direction','coaching'],
+      ['motivation','accountability'],
+      ['time-constraint','flexible'],
+      ['self-managed','independent']
+    ]
+  }
+];
+
+// Services [0..9]
+// [0] ProGrit Coaching, [1] ProGrit Spiful, [2] ProGrit Shadoten, [3] ProGrit DiaTalk,
+// [4] Polyglots Recipe, [5] Polyglots Online Lesson, [6] Polyglots Personal Training,
+// [7] EC Video, [8] EC Online Lesson, [9] EC AI
+const services = [
+  {
+    name: "コーチングプログラム",
+    company: "プログリット",
+    companyClass: "progrit",
+    tagline: "専属コンサルタントによる短期集中コーチング",
+    description: "科学的な第二言語習得論に基づき、専属コンサルタントが学習目標・レベルに合わせた完全個別カリキュラムを設計。毎日の進捗管理と丁寧なフィードバックで、ビジネス英語力を3ヶ月間で集中的に引き上げます。ビジネス英会話・TOEIC・初級者向けなど複数コースを展開。",
+    isProgrit: true,
+    reasons: [
+      { tags: ['business','professional'], text: "ビジネス英語に特化したカリキュラムで、職場ですぐ役立つ英語力を体系的に習得できます" },
+      { tags: ['toeic','exam'], text: "TOEIC専用コースがあり、スコアアップに直結した効率的な学習が可能です" },
+      { tags: ['coaching','support','intensive-support'], text: "専属コンサルタントが毎日の学習を徹底管理し、挫折しにくい環境を提供します" },
+      { tags: ['intensive','short-term','dedicated'], text: "3ヶ月の短期集中プログラムで、最短・最大の成果を狙えます" },
+      { tags: ['advanced'], text: "上級者向けの高度なカリキュラムで、英語力をさらなる高みへ引き上げます" },
+      { tags: ['balanced','comprehensive'], text: "4技能（読む・聞く・話す・書く）を網羅した総合的な英語力強化ができます" },
+      { tags: [], text: "個別最適化された学習プランで、あなたの課題に直結した効率的な英語力向上を実現します", _default: true },
+      { tags: [], text: "専属コンサルタントによる伴走型サポートで、確実に目標達成を目指せます", _default: true }
+    ]
+  },
+  {
+    name: "スピフル",
+    company: "プログリット",
+    companyClass: "progrit",
+    tagline: "AIフィードバック付きスピーキング強化アプリ",
+    description: "瞬間英作文やAIによる発話添削を組み合わせ、ビジネス英会話の「話す瞬発力」を鍛えるスマートフォンアプリ。実践的なビジネスシーンを想定した豊富なテーマで、スピーキングの実力を着実に底上げします。",
+    isProgrit: true,
+    reasons: [
+      { tags: ['speaking','pronunciation'], text: "瞬間英作文×AI発話添削で、英語をとっさに口から出す力を集中的に鍛えます" },
+      { tags: ['business','professional'], text: "ビジネスシーン特化のテーマが豊富で、実務に直結したスピーキング力が身につきます" },
+      { tags: ['app','self-paced'], text: "スマホアプリで自分のペース・好きな時間に学習でき、継続しやすい設計です" },
+      { tags: ['self-managed','independent'], text: "AIが自動でフィードバックするため、講師なしでも質の高いスピーキング練習ができます" },
+      { tags: [], text: "AIがリアルタイムで発話を採点・添削し、スピーキング力を効率よく向上させます", _default: true },
+      { tags: [], text: "ビジネス英会話に必要な表現を反射的に使えるよう、繰り返し練習できます", _default: true }
+    ]
+  },
+  {
+    name: "シャドテン",
+    company: "プログリット",
+    companyClass: "progrit",
+    tagline: "プロの毎日フィードバック付きシャドーイングアプリ",
+    description: "プロ講師が毎日シャドーイングの音声に個別フィードバックを提供する、リスニング・発音強化に特化したアプリ。1,000以上のビジネス・日常・著名人スピーチ教材から自分のレベルに合った素材を選んで学習できます。",
+    isProgrit: true,
+    reasons: [
+      { tags: ['listening','comprehension'], text: "毎日のシャドーイングで耳を鍛え、ネイティブ音声への反応速度を高めます" },
+      { tags: ['speaking','pronunciation'], text: "プロ講師のフィードバックで発音の癖を矯正し、伝わる英語発音を習得できます" },
+      { tags: ['shadowing','app-practice'], text: "シャドーイングに特化した設計で、聞く・話すを同時に効率よく鍛えられます" },
+      { tags: ['app','self-paced','short-time','minimal-time'], text: "スキマ時間に1素材ずつ取り組める構成で、忙しい社会人でも継続しやすいです" },
+      { tags: [], text: "プロ講師の毎日フィードバックにより、独学より格段に高いリスニング・発音改善効果が得られます", _default: true },
+      { tags: [], text: "1,000以上の豊富な教材でマンネリせず、モチベーションを保ちながら継続できます", _default: true }
+    ]
+  },
+  {
+    name: "ディアトーク",
+    company: "プログリット",
+    companyClass: "progrit",
+    tagline: "予約なしでいつでも話せるAI英会話コーチ",
+    description: "AIネイティブ講師と予約不要でいつでも英会話できるスマートフォンアプリ。ユーザーの興味・近況をAIが記憶し、自分事として会話できるパーソナライズ機能が特徴。複数の英語アクセントに対応し、実際のビジネス環境に近いリスニング練習も可能。",
+    isProgrit: true,
+    reasons: [
+      { tags: ['ai','flexible','minimal-time','casual'], text: "予約不要でいつでも起動でき、移動中・休憩中などスキマ時間を英会話練習に変えられます" },
+      { tags: ['conversation','practice'], text: "AIが会話を記憶・パーソナライズするため、まるで本物の会話相手と話すような自然な練習ができます" },
+      { tags: ['speaking','pronunciation'], text: "繰り返し話す練習ができるため、スピーキングへの心理的ハードルを下げ、流暢さを高めます" },
+      { tags: ['self-managed','independent','try'], text: "気軽に始められて費用も抑えられるため、英会話練習の第一歩として最適です" },
+      { tags: [], text: "AIが発話スピードやアクセントを調整できるため、自分のレベルに合った会話練習が可能です", _default: true },
+      { tags: [], text: "24時間いつでも英会話練習できる環境で、英語を話すことへの自信と習慣を身につけられます", _default: true }
+    ]
+  },
+  {
+    name: "スマートラーニング（学習アプリ）",
+    company: "フルーエント",
+    companyClass: "polyglots",
+    tagline: "AIが自動生成する個別最適化学習カリキュラム",
+    description: "ユーザーの学習目的・英語レベル・進捗をAIが分析し「My Plan（マイプラン）」として自動生成するスマートフォン学習アプリ。語彙・文法・リーディングなど幅広いコンテンツを自分のペースで学習でき、継続しやすい設計が評価されています。",
+    isProgrit: false,
+    reasons: [
+      { tags: ['app','self-paced','self-managed','independent'], text: "AIが個別カリキュラムを自動作成するため、自分で計画を立てる手間なく効率的に学べます" },
+      { tags: ['reading','vocabulary'], text: "語彙・文法・リーディングなど幅広いコンテンツで、バランスよく英語基礎力を強化できます" },
+      { tags: ['beginner','intermediate'], text: "AIがレベルに合わせた難易度で出題するため、初級〜中級者が無理なく力をつけられます" },
+      { tags: ['casual','try','long-term','continuous'], text: "低コストでスキマ時間に取り組める設計で、忙しい方でも長期間継続しやすいです" },
+      { tags: [], text: "AI個別カリキュラムにより、自分の弱点に集中した効率的な自習が可能です", _default: true },
+      { tags: [], text: "多彩なコンテンツでマンネリしにくく、英語学習習慣の定着に適しています", _default: true }
+    ]
+  },
+  {
+    name: "ライブレッスン",
+    company: "フルーエント",
+    companyClass: "polyglots",
+    tagline: "日英バイリンガル講師によるマンツーマン45分レッスン",
+    description: "高い英語資格と豊富な指導経験を持つ厳選されたバイリンガル講師によるマンツーマンのオンラインレッスン（45分）。ビジネス英会話やTOEIC対策など目標に応じたレッスンが受けられ、日本語でのサポートがあるため英語に不安な方も安心して受講できます。",
+    isProgrit: false,
+    reasons: [
+      { tags: ['conversation','practice','human-lesson','instructor'], text: "高品質な日英バイリンガル講師との45分マンツーマンで、実践的な英会話力を効率的に鍛えられます" },
+      { tags: ['business','professional'], text: "ビジネス英会話に特化したレッスンプランがあり、実務に直結した英語力向上を図れます" },
+      { tags: ['some-support'], text: "講師が個々のレベル・目標に合わせてレッスンを進めるため、適度なサポートを受けながら学べます" },
+      { tags: ['toeic','exam'], text: "TOEIC対策レッスンも実施しており、スコアアップを目指す方にも対応しています" },
+      { tags: [], text: "日本語サポートがあるバイリンガル講師なので、英語への不安を感じにくく実践的な会話練習ができます", _default: true },
+      { tags: [], text: "週1〜2回のレッスンで、着実にアウトプット力（話す・聞く）を強化できます", _default: true }
+    ]
+  },
+  {
+    name: "パーソナルメンター",
+    company: "フルーエント",
+    companyClass: "polyglots",
+    tagline: "専任メンター＋アプリ＋レッスンの一体型プログラム",
+    description: "専任メンターによる学習カウンセリング・週次チャット相談・月次オンライン面談を軸に、アプリ学習とライブレッスンを組み合わせた包括的な学習プログラム。AIと人間の双方でサポートし、学習の継続・定着を強力に後押しします。",
+    isProgrit: false,
+    reasons: [
+      { tags: ['coaching','support','intensive-support'], text: "専任メンターによる週次・月次の定期的なサポートで、学習の迷いや停滞を解消してくれます" },
+      { tags: ['long-term','continuous'], text: "アプリ・レッスン・コーチングが一体化した設計で、長期的な英語力向上に最適です" },
+      { tags: ['balanced','comprehensive'], text: "アプリ学習とオンラインレッスンを組み合わせることで、4技能をバランスよく強化できます" },
+      { tags: ['advanced','business','professional'], text: "上級者向けの高度なカリキュラムと専任サポートで、ビジネス英語の実力を引き上げます" },
+      { tags: [], text: "AI×人間の二重サポートで、学習の質と継続率を高めレベルアップを加速します", _default: true },
+      { tags: [], text: "月に1回の個別面談で学習目標の見直しができ、常に最適な学習計画を維持できます", _default: true }
+    ]
+  },
+  {
+    name: "ビデオラーニング",
+    company: "ビジョンイングリッシュ",
+    companyClass: "ec",
+    tagline: "14,000本の動画でリスニング・語彙・発音を強化",
+    description: "世界中から集めた14,000本超の動画（ニュース・映画・スポーツ・ビジネスなど）で生きた英語を学習するプラットフォーム。動画視聴→語彙学習→AI音声認識による発音練習のステップで、リスニング・語彙力・発音を総合的に鍛えられます。",
+    isProgrit: false,
+    reasons: [
+      { tags: ['listening','comprehension'], text: "多彩な動画コンテンツで実際の英語音声に慣れ、リスニング力と語彙力を同時に強化できます" },
+      { tags: ['reading','vocabulary'], text: "動画の字幕・語彙機能で文脈の中から自然に単語・表現を習得できます" },
+      { tags: ['video','content','video-content'], text: "興味のあるジャンルの動画で楽しみながら学べるため、モチベーションが維持しやすいです" },
+      { tags: ['self-managed','independent','app','self-paced'], text: "自分の興味・レベルに合った動画を自由に選べるため、無理なく自律的に学習を続けられます" },
+      { tags: ['beginner'], text: "レベル別動画が豊富で、初心者から英語に慣れ親しむには最適な環境です" },
+      { tags: [], text: "AI音声認識による即時フィードバックで、発音の課題を自己発見しながら改善できます", _default: true },
+      { tags: [], text: "動画・単語・スピーキングを一つのプラットフォームで完結でき、学習の効率が高いです", _default: true }
+    ]
+  },
+  {
+    name: "マンツーマンレッスン",
+    company: "ビジョンイングリッシュ",
+    companyClass: "ec",
+    tagline: "動画学習と連携した25分マンツーマンレッスン",
+    description: "事前の動画自習と連携した25分のマンツーマンオンラインレッスン。動画で学んだ内容を講師との会話で即実践するサイクルで、インプットとアウトプットを効率よく結びつけます。",
+    isProgrit: false,
+    reasons: [
+      { tags: ['human-lesson','instructor','conversation','practice'], text: "講師との1対1で学んだ内容を即アウトプットできるため、知識が実践的に定着します" },
+      { tags: ['video','content','video-content'], text: "事前の動画学習と連携したレッスンで、インプット→アウトプットのサイクルが効率的です" },
+      { tags: ['some-support'], text: "講師からの適切なフィードバックで、自己学習では気づけない弱点を修正できます" },
+      { tags: [], text: "25分のコンパクトなレッスンで、忙しい方でも定期的なアウトプット練習を続けられます", _default: true },
+      { tags: [], text: "動画で慣れ親しんだ表現を講師との会話で使うことで、実践的な英語運用力を養えます", _default: true }
+    ]
+  },
+  {
+    name: "AIスピーキング",
+    company: "ビジョンイングリッシュ",
+    companyClass: "ec",
+    tagline: "最新AI活用のAI会話パートナーで話す練習を無制限に",
+    description: "最新AI技術を活用したAI会話パートナーと24時間いつでもスピーキング練習ができるサービス。人との会話に緊張する方や、回数制限なく練習したい方に最適。発音評価・文法フィードバックも自動で受けられます。",
+    isProgrit: false,
+    reasons: [
+      { tags: ['ai','flexible','minimal-time','casual'], text: "24時間いつでも・何度でも英会話練習できるため、日常的に英語を話す習慣が身につきます" },
+      { tags: ['speaking','pronunciation'], text: "AIによる発音評価と文法フィードバックで、スピーキングの弱点を効率よく改善できます" },
+      { tags: ['self-managed','independent','try'], text: "講師との会話に緊張しがちな方でも、AIなら気軽にアウトプット練習を重ねられます" },
+      { tags: ['conversation','practice'], text: "実際の会話形式のAI練習で、英語で考えて話す反射神経を鍛えられます" },
+      { tags: [], text: "最新AIによる自然な会話と無制限に練習でき、話す量が圧倒的に確保できます", _default: true },
+      { tags: [], text: "リアルタイムフィードバックにより、間違いをその場で修正しながら上達できます", _default: true }
+    ]
+  }
+];
+
+// Scoring matrix: scores[qIndex][answerIndex] = [s0..s9]
+const scores = [
+  // Q0: 目的
+  [
+    [3,2,1,2,1,2,3,1,2,1], // 海外赴任・出張
+    [3,3,2,2,1,3,3,1,2,2], // 会議・ディスカッション
+    [2,2,1,2,3,2,2,2,2,2], // 基本的な連絡・やり取り
+    [2,3,3,3,1,2,2,2,2,3], // ネイティブに近い表現
+    [2,1,1,1,3,2,2,3,2,1]  // 基礎から体系的に
+  ],
+  // Q1: レベル
+  [
+    [2,1,2,2,3,1,1,3,1,2], // 初級
+    [2,2,2,2,2,2,2,2,2,2], // 中級
+    [3,3,2,2,1,3,3,1,3,2], // 上級
+    [2,2,2,2,2,2,2,2,2,2]  // わからない
+  ],
+  // Q2: 学習時間
+  [
+    [3,2,2,1,1,1,3,1,1,1], // 〜3ヶ月以内
+    [3,2,2,2,2,2,3,2,2,1], // 3〜6ヶ月以内
+    [2,2,3,2,3,2,2,3,2,2], // 6〜12ヶ月以内
+    [1,2,2,3,3,2,2,3,2,3]  // 1年以上
+  ],
+  // Q3: スキル
+  [
+    [2,3,1,3,1,2,2,1,2,3], // スピーキング
+    [2,1,3,1,2,2,2,3,1,1], // リスニング
+    [2,1,1,0,3,1,2,3,1,0], // リーディング
+    [3,1,0,0,2,2,3,1,2,0]  // ライティング
+  ],
+  // Q4: スタイル
+  [
+    [1,3,3,3,3,0,1,3,0,2], // アプリ自己学習
+    [3,1,1,0,1,2,3,0,2,0], // コーチ管理
+    [1,1,1,1,2,1,1,3,2,1], // 動画コンテンツ
+    [2,2,1,3,0,3,2,1,3,3]  // 会話実践
+  ],
+  // Q5: サポート
+  [
+    [0,3,3,3,3,1,0,3,1,3], // 自己管理
+    [2,2,2,1,2,3,2,2,3,1], // 適度サポート
+    [3,1,2,0,1,1,3,0,1,0]  // 本格コーチング
+  ],
+  // Q6: 挫折経験
+  [
+    [3,1,2,1,1,2,3,1,2,1], // 何をすればよいかわからなかった
+    [3,2,2,2,2,1,3,1,1,1], // モチベーション・習慣が続かなかった
+    [1,3,3,3,3,1,1,3,1,3], // 時間が取れなかった
+    [1,2,2,2,2,2,2,2,2,2]  // 挫折経験なし
+  ],
+];
+
+// ============================================================
+//  STATE
+// ============================================================
+let currentQ = 0;
+let answers = questions.map(q => q.multiSelect ? [] : -1);
+
+// ============================================================
+//  QUIZ LOGIC
+// ============================================================
+function startQuiz() {
+  currentQ = 0;
+  answers = questions.map(q => q.multiSelect ? [] : -1);
+  showScreen('screen-question');
+  renderQuestion();
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function renderQuestion() {
+  const q = questions[currentQ];
+  const total = questions.length;
+
+  document.getElementById('q-number').textContent = 'Q' + (currentQ + 1);
+  document.getElementById('q-text').textContent = q.text;
+  document.getElementById('q-progress-text').textContent = `Question ${currentQ + 1} / ${total}`;
+  document.getElementById('q-progress-pct').textContent = Math.round((currentQ / total) * 100) + '%';
+  document.getElementById('q-progress-fill').style.width = (currentQ / total * 100) + '%';
+
+  const optContainer = document.getElementById('q-options');
+  optContainer.innerHTML = '';
+  if (q.multiSelect) {
+    const hint = document.createElement('div');
+    hint.style.cssText = 'font-size:0.78rem;color:#888;margin-bottom:10px;';
+    hint.textContent = '※ 当てはまるものをすべて選択してください';
+    optContainer.appendChild(hint);
+  }
+  q.options.forEach((opt, i) => {
+    const isSelected = q.multiSelect ? answers[currentQ].includes(i) : answers[currentQ] === i;
+    const btn = document.createElement('button');
+    btn.className = 'option-btn' + (isSelected ? ' selected' : '');
+    btn.innerHTML = `<span class="opt-icon">${isSelected ? '✓' : String.fromCharCode(65 + i)}</span>${opt}`;
+    btn.onclick = () => selectOption(i);
+    optContainer.appendChild(btn);
+  });
+
+  document.getElementById('btn-back').style.visibility = currentQ === 0 ? 'hidden' : 'visible';
+  const hasAnswer = q.multiSelect ? answers[currentQ].length > 0 : answers[currentQ] !== -1;
+  document.getElementById('btn-next').disabled = !hasAnswer;
+  document.getElementById('btn-next').textContent = currentQ === questions.length - 1 ? '結果を見る →' : '次へ →';
+}
+
+function selectOption(i) {
+  const q = questions[currentQ];
+  if (q.multiSelect) {
+    const arr = answers[currentQ];
+    const pos = arr.indexOf(i);
+    if (pos > -1) arr.splice(pos, 1);
+    else arr.push(i);
+    // Re-render options to reflect updated selections
+    const btns = document.querySelectorAll('.option-btn');
+    btns.forEach((btn, idx) => {
+      const sel = arr.includes(idx);
+      btn.classList.toggle('selected', sel);
+      btn.querySelector('.opt-icon').textContent = sel ? '✓' : String.fromCharCode(65 + idx);
+    });
+    document.getElementById('btn-next').disabled = arr.length === 0;
+  } else {
+    answers[currentQ] = i;
+    document.querySelectorAll('.option-btn').forEach((btn, idx) => {
+      btn.classList.toggle('selected', idx === i);
+      btn.querySelector('.opt-icon').textContent = idx === i ? '✓' : String.fromCharCode(65 + idx);
+    });
+    document.getElementById('btn-next').disabled = false;
+  }
+}
+
+function nextQuestion() {
+  const q = questions[currentQ];
+  const hasAnswer = q.multiSelect ? answers[currentQ].length > 0 : answers[currentQ] !== -1;
+  if (!hasAnswer) return;
+  if (currentQ < questions.length - 1) {
+    currentQ++;
+    renderQuestion();
+  } else {
+    showResults();
+  }
+}
+
+function prevQuestion() {
+  if (currentQ > 0) {
+    currentQ--;
+    renderQuestion();
+  }
+}
+
+// ============================================================
+//  SCORING & RESULTS
+// ============================================================
+function computeScores() {
+  const totals = new Array(services.length).fill(0);
+  answers.forEach((ans, qIdx) => {
+    if (Array.isArray(ans)) {
+      ans.forEach(a => {
+        scores[qIdx][a].forEach((pts, sIdx) => { totals[sIdx] += pts; });
+      });
+    } else {
+      if (ans < 0) return;
+      scores[qIdx][ans].forEach((pts, sIdx) => { totals[sIdx] += pts; });
+    }
+  });
+  return totals;
+}
+
+function getUserTags() {
+  const tags = new Set();
+  answers.forEach((ans, qIdx) => {
+    if (Array.isArray(ans)) {
+      ans.forEach(a => { (questions[qIdx].tags[a] || []).forEach(t => tags.add(t)); });
+    } else if (ans >= 0) {
+      (questions[qIdx].tags[ans] || []).forEach(t => tags.add(t));
+    }
+  });
+  return tags;
+}
+
+function getReasons(service, userTags) {
+  // Find dynamic reasons with matching tags
+  const dynamic = service.reasons.filter(r => !r._default && r.tags.some(t => userTags.has(t)));
+  const defaults = service.reasons.filter(r => r._default);
+  const merged = [...dynamic, ...defaults];
+  // Deduplicate and return top 2
+  const seen = new Set();
+  const result = [];
+  for (const r of merged) {
+    if (!seen.has(r.text)) {
+      seen.add(r.text);
+      result.push(r.text);
+      if (result.length >= 2) break;
+    }
+  }
+  return result;
+}
+
+function renderStars(stars) {
+  let html = '<span class="rc-stars-row">';
+  for (let i = 1; i <= 5; i++) {
+    if (stars >= i) {
+      html += '<span class="star-full">★</span>';
+    } else if (stars >= i - 0.5) {
+      html += '<span class="star-half-wrap">★<span class="star-half-fill">★</span></span>';
+    } else {
+      html += '<span class="star-empty">★</span>';
+    }
+  }
+  html += '</span>';
+  return html;
+}
+
+function toStars(score, maxScore) {
+  if (maxScore === 0) return 3.0;
+  const ratio = score / maxScore;
+  return Math.max(2.5, Math.round((2.5 + ratio * 2.5) * 2) / 2);
+}
+
+function showResults() {
+  const rawScores = computeScores();
+  const userTags = getUserTags();
+
+  // Build ranked list from raw scores (no artificial boost)
+  let ranked = services.map((s, i) => ({
+    index: i,
+    score: rawScores[i]
+  })).sort((a, b) => b.score - a.score);
+
+  // Constraint 1: ProGrit must be in top 2
+  const hasProgritInTop2 = ranked.slice(0, 2).some(r => services[r.index].isProgrit);
+  if (!hasProgritInTop2) {
+    const pgIdx = ranked.findIndex((r, i) => i >= 2 && services[r.index].isProgrit);
+    if (pgIdx > -1) {
+      const pg = ranked.splice(pgIdx, 1)[0];
+      // Insert at position 1 (rank 2) with a score between #1 and #3
+      pg.score = Math.floor((ranked[0].score + ranked[1].score) / 2);
+      ranked.splice(1, 0, pg);
+    }
+  }
+
+  // Constraint 2: If user selected リスニング (Q4 index 1), シャドテン (services[2]) must be in top 2
+  const skillAnswers = answers[3]; // Q4 is index 3
+  const wantsListening = Array.isArray(skillAnswers) && skillAnswers.includes(1);
+  if (wantsListening) {
+    const shadotenInTop2 = ranked.slice(0, 2).some(r => r.index === 2);
+    if (!shadotenInTop2) {
+      const shadotenIdx = ranked.findIndex(r => r.index === 2);
+      if (shadotenIdx > -1) {
+        const shadoten = ranked.splice(shadotenIdx, 1)[0];
+        shadoten.score = Math.floor((ranked[0].score + ranked[1].score) / 2);
+        ranked.splice(1, 0, shadoten);
+      }
+    }
+  }
+
+  // Constraint 3: Ensure top 3 has services from at least 2 different companies
+  const top3Companies = () => new Set(ranked.slice(0, 3).map(r => services[r.index].companyClass));
+  if (top3Companies().size === 1) {
+    // All top 3 from same company — find best service from another company
+    const altIdx = ranked.findIndex((r, i) => i >= 3 && services[r.index].companyClass !== services[ranked[0].index].companyClass);
+    if (altIdx > -1) {
+      const alt = ranked.splice(altIdx, 1)[0];
+      ranked.splice(2, 1, alt); // replace #3
+      ranked.sort((a, b) => b.score - a.score).slice(); // re-sort top portion
+    }
+  }
+
+  const top3 = ranked.slice(0, 3);
+  const maxScore = ranked[0].score;
+  const medals = ['🥇', '🥈', '🥉'];
+  const rankLabels = ['1位 おすすめ', '2位', '3位'];
+
+  const container = document.getElementById('result-cards');
+  container.innerHTML = '';
+
+  top3.forEach((item, rank) => {
+    const svc = services[item.index];
+    const stars = [5.0, 4.5, 4.0][rank];
+    const reasons = getReasons(svc, userTags);
+    const accentColor = { progrit: '#ffa500', polyglots: '#2eab5e', ec: '#9b1b30' }[svc.companyClass];
+
+    const card = document.createElement('div');
+    card.className = `result-card rank-${rank + 1}`;
+    card.innerHTML = `
+      <div class="result-card-top">
+        <div class="rc-rank-row">
+          <div class="rc-rank-badge">
+            <span class="rank-medal">${medals[rank]}</span>
+            <span class="rank-label">${rankLabels[rank]}</span>
+          </div>
+          <div class="rc-match">
+            <div class="rc-stars-text" style="color:${accentColor}">${stars.toFixed(1)} / 5.0</div>
+            ${renderStars(stars)}
+            <span class="rc-match-label">マッチ度</span>
+          </div>
+        </div>
+        <div class="rc-service-info">
+          <span class="rc-company-badge ${svc.companyClass}">${svc.company}</span>
+          <div>
+            <div class="rc-service-name">${svc.name}</div>
+            <div class="rc-tagline">${svc.tagline}</div>
+          </div>
+        </div>
+      </div>
+      <div class="result-card-body">
+        <div class="rc-desc">${svc.description}</div>
+        <div class="rc-reasons-title">▶ おすすめの理由</div>
+        <ul class="rc-reasons">
+          ${reasons.map(r => `<li>${r}</li>`).join('')}
+        </ul>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+
+  showScreen('screen-result');
+}
+
+function resetQuiz() {
+  currentQ = 0;
+  answers = questions.map(q => q.multiSelect ? [] : -1);
+  showScreen('screen-start');
+}
+</script>
+</body>
+</html>
